@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#263756">
 
+    <title>Where Is My Bus? | Bus Tracking</title>
+
+    <meta name="description"
+          content="Find buses, explore routes and check estimated arrival times with Where Is My Bus.">
+
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+    <a href="#" class="brand">
+        <img src="logo.png" alt="Where Is My Bus logo">
+        <span>Where Is My <strong>Bus?</strong></span>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+        ☰
+    </button>
+
+    <nav class="nav-links" id="navLinks">
+        <a href="#home">Home</a>
+        <a href="#tracking">Live Tracking</a>
+        <a href="#routes">Find Buses</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <button class="nav-location" id="locationButton">
+        <span>⌖</span> My Location
+    </button>
+</header>
+
+<main>
+
+    <!-- HERO SECTION -->
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <span class="eyebrow">YOUR JOURNEY, OUR PRIORITY</span>
+
+            <h1>Where Is My <span>Bus?</span></h1>
+
+            <p>
+                Stop waiting. Start travelling.
+                Find buses, explore routes and check estimated
+                arrival times, all in one place.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#routes" class="primary-btn">Find Your Bus →</a>
+                <a href="#tracking" class="secondary-btn">Explore Live Map</a>
+            </div>
+
+            <div class="hero-note">
+                <span class="status-dot"></span>
+                Your smarter way to travel
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="visual-orbit orbit-one"></div>
+            <div class="visual-orbit orbit-two"></div>
+
+            <img src="logo.png" alt="Bus tracking emblem"
+                 class="hero-logo">
+
+            <div class="floating-card">
+                <span class="floating-icon">🚌</span>
+                <div>
+                    <strong>Every Bus. Every Route.</strong>
+                    <small>One simple platform.</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEARCH SECTION -->
+
+    <section class="search-section" id="routes">
+
+        <div class="section-heading">
+            <span class="eyebrow">PLAN YOUR JOURNEY</span>
+            <h2>Find Your Bus</h2>
+            <p>Search by bus number, starting point or destination.</p>
+        </div>
+
+        <div class="search-panel">
+
+            <div class="search-field">
+                <label for="busSearch">Bus number or route</label>
+                <input type="text" id="busSearch"
+                       placeholder="Example: KA34 F1234">
+            </div>
+
+            <div class="search-field">
+                <label for="sourceSearch">From</label>
+                <input type="text" id="sourceSearch"
+                       placeholder="Starting point">
+            </div>
+
+            <div class="search-field">
+                <label for="destinationSearch">To</label>
+                <input type="text" id="destinationSearch"
+                       placeholder="Destination">
+            </div>
+
+            <button class="primary-btn search-button" id="searchButton">
+                Search Buses
+            </button>
+        </div>
+
+        <div class="filter-area">
+            <span>Bus category:</span>
+
+            <button class="filter-btn active" data-category="All">All</button>
+            <button class="filter-btn" data-category="Government">Government</button>
+            <button class="filter-btn" data-category="Private">Private</button>
+            <button class="filter-btn" data-category="City">City</button>
+            <button class="filter-btn" data-category="College">College</button>
+        </div>
+
+        <div class="results-heading">
+            <h3>Available Buses</h3>
+            <span id="resultCount">Loading buses...</span>
+        </div>
+
+        <div class="bus-grid" id="busResults"></div>
+
+        <div class="empty-state" id="emptyState" hidden>
+            <span>🚌</span>
+            <h3>No buses found</h3>
+            <p>Try another bus number, route or category.</p>
+        </div>
+
+    </section>
+
+    <!-- LIVE TRACKING -->
+
+    <section class="tracking-section" id="tracking">
+
+        <div class="section-heading">
+            <span class="eyebrow">EXPLORE THE MAP</span>
+            <h2>Bus Live Tracking</h2>
+            <p>
+                Explore bus positions and routes on the interactive map.
+            </p>
+        </div>
+
+        <div class="tracking-layout">
+
+            <div class="map-container">
+                <div class="map-label">
+                    <span class="status-dot"></span>
+                    DEMO SIMULATION
+                </div>
+                <div id="map"></div>
+            </div>
+
+            <aside class="tracking-info">
+                <h3>Tracking Information</h3>
+
+                <div class="tracking-stat">
+                    <span class="stat-icon">🚌</span>
+                    <div>
+                        <strong id="activeBusCount">0</strong>
+                        <small>Demo buses displayed</small>
+                    </div>
+                </div>
+
+                <div class="tracking-stat">
+                    <span class="stat-icon">📍</span>
+                    <div>
+                        <strong id="selectedBusName">Select a bus</strong>
+                        <small>Selected bus</small>
+                    </div>
+                </div>
+
+                <div class="tracking-stat">
+                    <span class="stat-icon">⏱️</span>
+                    <div>
+                        <strong id="selectedETA">--</strong>
+                        <small>Estimated arrival</small>
+                    </div>
+                </div>
+
+                <div class="selected-details" id="selectedDetails">
+                    Select a bus from the list or map to see its details.
+                </div>
+
+                <div class="map-legend">
+                    <h4>Map Legend</h4>
+                    <p><span class="legend-dot government"></span> Government</p>
+                    <p><span class="legend-dot private"></span> Private</p>
+                    <p><span class="legend-dot city"></span> City</p>
+                    <p><span class="legend-dot college"></span> College</p>
+                </div>
+
+                <p class="simulation-note">
+                    Demo mode: Bus positions move using sample coordinates.
+                    They are not actual GPS locations.
+                </p>
+            </aside>
+
+        </div>
+    </section>
+
+    <!-- POPULAR ROUTES -->
+
+    <section class="popular-section">
+        <div class="section-heading">
+            <span class="eyebrow">DISCOVER CONNECTIONS</span>
+            <h2>Popular Routes</h2>
+            <p>Explore some example routes in our demonstration system.</p>
+        </div>
+
+        <div class="route-grid">
+
+            <article class="route-card">
+                <span class="route-icon">🚌</span>
+                <h3>City Route</h3>
+                <p>Ballari Bus Stand → Cowl Bazaar</p>
+                <button class="text-btn" data-route="city">Explore Route →</button>
+            </article>
+
+            <article class="route-card">
+                <span class="route-icon">🚍</span>
+                <h3>Intercity Route</h3>
+                <p>Ballari → Hospet</p>
+                <button class="text-btn" data-route="intercity">Explore Route →</button>
+            </article>
+
+            <article class="route-card">
+                <span class="route-icon">🎓</span>
+                <h3>College Route</h3>
+                <p>Ballari Bus Stand → BITM</p>
+                <button class="text-btn" data-route="college">Explore Route →</button>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+
+    <section class="features-section" id="about">
+
+        <div class="section-heading">
+            <span class="eyebrow">TRAVEL MADE SIMPLE</span>
+            <h2>Everything You Need</h2>
+            <p>A single platform for a better public transportation experience.</p>
+        </div>
+
+        <div class="feature-grid">
+
+            <article class="feature-card">
+                <span>📍</span>
+                <h3>Live Bus Tracking</h3>
+                <p>Explore bus positions on an interactive map.</p>
+            </article>
+
+            <article class="feature-card">
+                <span>⏰</span>
+                <h3>Arrival Predictions</h3>
+                <p>Check estimated and scheduled arrival information.</p>
+            </article>
+
+            <article class="feature-card">
+                <span>🛣️</span>
+                <h3>Route Information</h3>
+                <p>Explore stops, destinations and available routes.</p>
+            </article>
+
+            <article class="feature-card">
+                <span>❤️</span>
+                <h3>Favourite Buses</h3>
+                <p>Save buses you frequently use for quick access.</p>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- NOTIFICATION -->
+
+    <div class="toast" id="toast" role="status"></div>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-brand">
+        <img src="logo.png" alt="Logo">
+        <div>
+            <strong>Where Is My Bus?</strong>
+            <small>Your journey, our priority.</small>
+        </div>
+    </div>
+
+    <p>Making public transportation more accessible.</p>
+    <p class="copyright">
+        © 2026 Where Is My Bus? | Community Project
+    </p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
